@@ -1,13 +1,15 @@
 "use client";
 
 import { useAuthActions } from "@convex-dev/auth/react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, Suspense } from "react";
 import Image from "next/image";
 
-export default function SignIn() {
+function SignInForm() {
   const { signIn } = useAuthActions();
-  const [flow, setFlow] = useState<"signIn" | "signUp">("signIn");
+  const searchParams = useSearchParams();
+  const initialFlow = searchParams.get("flow") === "signUp" ? "signUp" : "signIn";
+  const [flow, setFlow] = useState<"signIn" | "signUp">(initialFlow);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -114,5 +116,13 @@ export default function SignIn() {
         )}
       </form>
     </div>
+  );
+}
+
+export default function SignIn() {
+  return (
+    <Suspense>
+      <SignInForm />
+    </Suspense>
   );
 }
