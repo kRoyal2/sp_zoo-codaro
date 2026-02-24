@@ -1,6 +1,17 @@
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
+
+export const getCurrentOrganization = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return null;
+    const user = await ctx.db.get(userId);
+    if (!user?.organizationId) return null;
+    return await ctx.db.get(user.organizationId);
+  },
+});
 
 export const createWorkspace = mutation({
   args: {

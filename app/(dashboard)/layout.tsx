@@ -14,17 +14,13 @@ export default function DashboardLayout({
   const { isAuthenticated, isLoading } = useConvexAuth();
   const router = useRouter();
 
-  // Assuming worker profiles correspond to the organization context for this app
-  const currentWorker = useQuery(api.myFunctions.getCurrentWorker);
+  const organization = useQuery(api.workspaces.getCurrentOrganization);
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      if (currentWorker === null) {
-        // null means no worker profile exists
-        router.push("/onboarding/workspace");
-      }
+    if (!isLoading && isAuthenticated && organization === null) {
+      router.push("/onboarding/workspace");
     }
-  }, [isLoading, isAuthenticated, currentWorker, router]);
+  }, [isLoading, isAuthenticated, organization, router]);
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#f8fafc]">

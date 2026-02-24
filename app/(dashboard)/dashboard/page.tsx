@@ -131,9 +131,9 @@ export default function DashboardPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {["Lead", "Qualified", "Proposal", "Closed Won"].map((stage) => (
               <div key={stage} className="text-center p-4 rounded-lg bg-slate-50 border border-slate-100">
-                <p className="text-2xl font-bold text-slate-900">
+                <div className="text-2xl font-bold text-slate-900">
                   {stats !== undefined ? (stats.dealsByStage[stage] ?? 0) : <Skeleton className="h-8 w-8 mx-auto" />}
-                </p>
+                </div>
                 <p className="text-xs text-slate-500 mt-1">{stage}</p>
               </div>
             ))}
