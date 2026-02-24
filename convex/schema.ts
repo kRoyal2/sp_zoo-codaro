@@ -135,4 +135,30 @@ export default defineSchema({
     key: v.string(),
     value: v.string(),
   }).index("by_key", ["key"]),
+
+  hikers: defineTable({
+    telegram_user_id: v.number(),
+    telegram_username: v.optional(v.string()),
+    status: v.string(), // "preparing" | "in_way" | "problem" | "finish"
+    description: v.optional(v.string()),
+    createdAt: v.number(),
+    lastSeenAt: v.optional(v.number()),
+  })
+    .index("by_telegram_user_id", ["telegram_user_id"])
+    .index("by_status", ["status"]),
+
+  hiker_messages: defineTable({
+    hiker_id: v.id("hikers"),
+    telegram_user_id: v.number(),
+    status_button: v.optional(v.string()),
+    message: v.optional(v.string()),
+    photoId: v.optional(v.id("_storage")),
+    geo_lat: v.optional(v.number()),
+    geo_lon: v.optional(v.number()),
+    datetime: v.number(),
+  })
+    .index("by_hiker", ["hiker_id"])
+    .index("by_telegram_user_id", ["telegram_user_id"])
+    .index("by_datetime", ["datetime"])
+    .index("by_hiker_and_datetime", ["hiker_id", "datetime"]),
 });

@@ -12,6 +12,7 @@ import type * as analytics from "../analytics.js";
 import type * as auth from "../auth.js";
 import type * as automations from "../automations.js";
 import type * as contacts from "../contacts.js";
+import type * as crons from "../crons.js";
 import type * as deals from "../deals.js";
 import type * as http from "../http.js";
 import type * as myFunctions from "../myFunctions.js";
@@ -19,6 +20,8 @@ import type * as onboarding from "../onboarding.js";
 import type * as seed from "../seed.js";
 import type * as settings from "../settings.js";
 import type * as tasks from "../tasks.js";
+import type * as telegram_bot from "../telegram_bot.js";
+import type * as telegram_poll from "../telegram_poll.js";
 import type * as workspaces from "../workspaces.js";
 
 import type {
@@ -32,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   automations: typeof automations;
   contacts: typeof contacts;
+  crons: typeof crons;
   deals: typeof deals;
   http: typeof http;
   myFunctions: typeof myFunctions;
@@ -39,6 +43,8 @@ declare const fullApi: ApiFromModules<{
   seed: typeof seed;
   settings: typeof settings;
   tasks: typeof tasks;
+  telegram_bot: typeof telegram_bot;
+  telegram_poll: typeof telegram_poll;
   workspaces: typeof workspaces;
 }>;
 

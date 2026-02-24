@@ -14,6 +14,7 @@ import {
   Workflow,
   ChevronLeft,
   ChevronRight,
+  Mountain,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { WORKSPACE_CONTEXT } from "@/lib/config";
@@ -27,6 +28,7 @@ const navItems = [
   { href: "/onboarding", icon: BookOpen, label: "Onboarding" },
   { href: "/automations", icon: Zap, label: "Automations" },
   { href: "/analytics", icon: BarChart3, label: "Analytics" },
+  { href: "/hikers", icon: Mountain, label: "Hikers" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];
 
