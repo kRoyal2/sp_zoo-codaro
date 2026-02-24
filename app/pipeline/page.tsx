@@ -1,0 +1,274 @@
+"use client";
+
+import { useState } from "react";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  useDroppable,
+  useDraggable,
+} from "@dnd-kit/core";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import { WORKSPACE_CONTEXT as WC } from "@/lib/config";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import { toast } from "sonner";
+import { Plus, Calendar, TrendingUp } from "lucide-react";
+
+type Deal = {
+  _id: Id<"deals">;
+  title: string;
+  contactId: Id<"contacts">;
+  contactName?: string;
+  value: number;
+  stage: string;
+  probability: number;
+  expectedClose: number;
+  notes?: string;
+};
+
+const STAGE_COLORS: Record<string, string> = {
+  Lead: "bg-slate-100",
+  Qualified: "bg-blue-50",
+  Proposal: "bg-amber-50",
+  Negotiation: "bg-orange-50",
+  "Closed Won": "bg-green-50",
+};
+const STAGE_BORDER: Record<string, string> = {
+  Lead: "border-slate-200",
+  Qualified: "border-blue-200",
+  Proposal: "border-amber-200",
+  Negotiation: "border-orange-200",
+  "Closed Won": "border-green-200",
+};
+const STAGE_HEADER: Record<string, string> = {
+  Lead: "bg-slate-600",
+  Qualified: "bg-blue-600",
+  Proposal: "bg-amber-500",
+  Negotiation: "bg-orange-500",
+  "Closed Won": "bg-green-600",
+};
+
+function DealCard({ deal, isDragging = false }: { deal: Deal; isDragging?: boolean }) {
+  return (
+    <div className={`bg-white rounded-lg border border-slate-200 p-3 shadow-sm space-y-2 ${isDragging ? "opacity-80 rotate-1 shadow-lg" : ""}`}>
+      <p className="font-medium text-slate-900 text-sm leading-tight">{deal.title}</p>
+      <p className="text-xs text-slate-500">{deal.contactName}</p>
+      <div className="flex items-center justify-between">
+        <span className="font-semibold text-slate-800 text-sm">{formatCurrency(deal.value, WC.currency)}</span>
+        <Badge variant="secondary" className="text-xs">{deal.probability}%</Badge>
+      </div>
+      <div className="flex items-center gap-1 text-xs text-slate-400">
+        <Calendar className="h-3 w-3" />
+        {formatDate(deal.expectedClose)}
+      </div>
+    </div>
+  );
+}
+
+function DroppableColumn({ stage, deals, onAddDeal }: { stage: string; deals: Deal[]; onAddDeal: (stage: string) => void }) {
+  const { setNodeRef, isOver } = useDroppable({ id: stage });
+  const total = deals.reduce((sum, d) => sum + d.value, 0);
+
+  return (
+    <div className="flex flex-col flex-1 min-w-[240px] max-w-[300px]">
+      {/* Column Header */}
+      <div className={`${STAGE_HEADER[stage] ?? "bg-slate-600"} rounded-t-xl px-4 py-3`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-white text-sm">{stage}</span>
+            <span className="bg-white/20 text-white text-xs rounded-full px-2 py-0.5">{deals.length}</span>
+          </div>
+          <Button variant="ghost" size="icon" className="h-6 w-6 text-white hover:bg-white/20" onClick={() => onAddDeal(stage)}>
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Cards Container */}
+      <div
+        ref={setNodeRef}
+        className={`flex-1 ${STAGE_COLORS[stage] ?? "bg-slate-50"} ${STAGE_BORDER[stage] ?? "border-slate-200"} border border-t-0 rounded-b-xl p-3 space-y-3 min-h-[400px] transition-colors ${isOver ? "ring-2 ring-indigo-400 ring-inset" : ""}`}
+      >
+        {deals.map((deal) => (
+          <DraggableCard key={deal._id} deal={deal} />
+        ))}
+        {deals.length === 0 && (
+          <div className="flex flex-col items-center justify-center h-32 text-center">
+            <p className="text-xs text-slate-400">Drop deals here</p>
+          </div>
+        )}
+      </div>
+
+      {/* Column Footer */}
+      <div className={`${STAGE_COLORS[stage] ?? "bg-slate-50"} border ${STAGE_BORDER[stage] ?? "border-slate-200"} border-t-0 rounded-b-none -mt-2 px-3 py-2`}>
+        <p className="text-xs font-medium text-slate-600">Total: {formatCurrency(total, WC.currency)}</p>
+      </div>
+    </div>
+  );
+}
+
+function DraggableCard({ deal }: { deal: Deal }) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: deal._id });
+  return (
+    <div ref={setNodeRef} {...listeners} {...attributes} className="cursor-grab active:cursor-grabbing">
+      <DealCard deal={deal} isDragging={isDragging} />
+    </div>
+  );
+}
+
+const emptyForm = { title: "", contactId: "", value: "", probability: "50", expectedClose: "", notes: "" };
+
+export default function PipelinePage() {
+  const deals = useQuery(api.deals.listDeals);
+  const contacts = useQuery(api.contacts.listContacts);
+  const updateDeal = useMutation(api.deals.updateDeal);
+  const createDeal = useMutation(api.deals.createDeal);
+
+  const [activeDeal, setActiveDeal] = useState<Deal | null>(null);
+  const [addStage, setAddStage] = useState<string | null>(null);
+  const [form, setForm] = useState(emptyForm);
+  const [submitting, setSubmitting] = useState(false);
+
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+
+  const dealsByStage = WC.pipelineStages.reduce<Record<string, Deal[]>>((acc, stage) => {
+    acc[stage] = (deals ?? []).filter((d) => d.stage === stage) as Deal[];
+    return acc;
+  }, {});
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const deal = (deals ?? []).find((d) => d._id === event.active.id);
+    if (deal) setActiveDeal(deal as Deal);
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    setActiveDeal(null);
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const deal = (deals ?? []).find((d) => d._id === active.id);
+    const newStage = over.id as string;
+    if (deal && WC.pipelineStages.includes(newStage) && deal.stage !== newStage) {
+      await updateDeal({ id: deal._id as Id<"deals">, stage: newStage });
+      toast.success(`Moved to ${newStage}`);
+    }
+  };
+
+  const handleAddDeal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.title || !form.contactId || !form.value || !form.expectedClose) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await createDeal({
+        title: form.title,
+        contactId: form.contactId as Id<"contacts">,
+        value: parseFloat(form.value),
+        stage: addStage ?? "Lead",
+        probability: parseInt(form.probability),
+        expectedClose: new Date(form.expectedClose).getTime(),
+        notes: form.notes,
+      });
+      toast.success(`${WC.dealLabel} created`);
+      setAddStage(null);
+      setForm(emptyForm);
+    } catch { toast.error("Failed to create deal"); }
+    finally { setSubmitting(false); }
+  };
+
+  return (
+    <div className="p-6 space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Pipeline</h1>
+          <p className="text-slate-500 text-sm mt-1">Drag and drop to move {WC.dealLabel.toLowerCase()}s between stages</p>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-slate-500">
+          <TrendingUp className="h-4 w-4 text-indigo-600" />
+          Total: {formatCurrency((deals ?? []).reduce((s, d) => s + d.value, 0), WC.currency)}
+        </div>
+      </div>
+
+      {deals === undefined ? (
+        <div className="flex gap-4">
+          {WC.pipelineStages.map((s) => <Skeleton key={s} className="flex-1 h-96 min-w-[240px]" />)}
+        </div>
+      ) : (
+        <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+          <div className="flex gap-4 overflow-x-auto pb-4">
+            {WC.pipelineStages.map((stage) => (
+              <DroppableColumn
+                key={stage}
+                stage={stage}
+                deals={dealsByStage[stage] ?? []}
+                onAddDeal={(s) => { setAddStage(s); setForm(emptyForm); }}
+              />
+            ))}
+          </div>
+          <DragOverlay>
+            {activeDeal && <DealCard deal={activeDeal} isDragging />}
+          </DragOverlay>
+        </DndContext>
+      )}
+
+      {/* Add Deal Modal */}
+      <Dialog open={!!addStage} onOpenChange={(o) => !o && setAddStage(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Add {WC.dealLabel} to {addStage}</DialogTitle></DialogHeader>
+          <form onSubmit={handleAddDeal} className="space-y-4 mt-2">
+            <div className="space-y-1">
+              <Label>Title *</Label>
+              <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Deal name" />
+            </div>
+            <div className="space-y-1">
+              <Label>Contact *</Label>
+              <Select value={form.contactId} onValueChange={(v) => setForm({ ...form, contactId: v })}>
+                <SelectTrigger><SelectValue placeholder="Select contact" /></SelectTrigger>
+                <SelectContent>
+                  {(contacts ?? []).map((c) => <SelectItem key={c._id} value={c._id}>{c.name} — {c.company}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label>Value ({WC.currency}) *</Label>
+                <Input type="number" min={0} value={form.value} onChange={(e) => setForm({ ...form, value: e.target.value })} placeholder="10000" />
+              </div>
+              <div className="space-y-1">
+                <Label>Probability (%)</Label>
+                <Input type="number" min={0} max={100} value={form.probability} onChange={(e) => setForm({ ...form, probability: e.target.value })} />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label>Expected Close *</Label>
+              <Input type="date" value={form.expectedClose} onChange={(e) => setForm({ ...form, expectedClose: e.target.value })} />
+            </div>
+            <div className="space-y-1">
+              <Label>Notes</Label>
+              <Input value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="Optional notes" />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setAddStage(null)}>Cancel</Button>
+              <Button type="submit" disabled={submitting}>{submitting ? "Creating..." : "Create"}</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
