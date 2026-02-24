@@ -1,46 +1,77 @@
-# Welcome to your Convex + Next.js + Convex Auth app
+# CoreStack
 
-This is a [Convex](https://convex.dev/) project created with [`npm create convex`](https://www.npmjs.com/package/create-convex).
+Full-stack CRM/operations platform. Built with **Next.js 16**, **Convex** (backend + DB), and **Convex Auth**.
 
-After the initial setup (<2 minutes) you'll have a working full-stack app using:
+What's inside:
+- **Landing page** — marketing site at `/`
+- **Dashboard** — full CRM app (contacts, deals, tasks, analytics, onboarding, automations) behind auth
+- **Convex backend** — real-time database, queries, mutations, seeded demo data
 
-- Convex as your backend (database, server logic)
-- [React](https://react.dev/) as your frontend (web page interactivity)
-- [Next.js](https://nextjs.org/) for optimized web hosting and page routing
-- [Tailwind](https://tailwindcss.com/) for building great looking accessible UI
-- [Convex Auth](https://labs.convex.dev/auth) for authentication
+---
 
-## Get started
+## Quick commands
 
-If you just cloned this codebase and didn't use `npm create convex`, run:
-
-```
-npm install
-npm run dev
-```
-
-If you're reading this README on GitHub and want to use this template, run:
-
-```
-npm create convex@latest -- -t nextjs-convexauth
+```bash
+make init   # first-time setup (install + Convex project + auth config)
+make dev    # daily development
+make seed   # populate DB with demo data
+make build  # production build
+make help   # full list of commands
 ```
 
-## Learn more
+---
 
-To learn more about developing your project with Convex, check out:
+## First-time setup
 
-- The [Tour of Convex](https://docs.convex.dev/get-started) for a thorough introduction to Convex principles.
-- The rest of [Convex docs](https://docs.convex.dev/) to learn about all Convex features.
-- [Stack](https://stack.convex.dev/) for in-depth articles on advanced topics.
-- [Convex Auth docs](https://labs.convex.dev/auth) for documentation on the Convex Auth library.
+**Prerequisites:** Node.js 18+, a free [Convex account](https://dashboard.convex.dev)
 
-## Configuring other authentication methods
+```bash
+make init
+make dev
+```
 
-To configure different authentication methods, see [Configuration](https://labs.convex.dev/auth/config) in the Convex Auth docs.
+On first run, `predev` will:
+1. Connect to Convex Cloud and create a project (you'll be prompted to log in if needed)
+2. Run `npx @convex-dev/auth` to configure the JWT secret for auth
+3. Seed the database with demo contacts, deals, and tasks
+4. Open the Convex dashboard in your browser
 
-## Join the community
+After that, the app starts at `http://localhost:3000`.
 
-Join thousands of developers building full-stack apps with Convex:
+---
 
-- Join the [Convex Discord community](https://convex.dev/community) to get help in real-time.
-- Follow [Convex on GitHub](https://github.com/get-convex/), star and contribute to the open-source implementation of Convex.
+## Running
+
+```bash
+make dev        # frontend + backend together (recommended)
+make dev-front  # Next.js only (port 3000)
+make dev-back   # Convex only
+```
+
+---
+
+## Where to look
+
+| URL | What's there |
+|-----|-------------|
+| `http://localhost:3000` | Landing page (CoreStack marketing site) |
+| `http://localhost:3000/signin` | Sign up / log in |
+| `http://localhost:3000/dashboard` | Main CRM dashboard (requires auth) |
+| `http://localhost:3000/contacts` | Contacts & pipeline |
+| `http://localhost:3000/deals` | Deals |
+| `http://localhost:3000/tasks` | Tasks |
+| `http://localhost:3000/analytics` | Analytics |
+| `http://localhost:3000/onboarding` | Client onboarding |
+| Convex dashboard | `npx convex dashboard` or via the link printed on first `dev` run |
+
+---
+
+## Config
+
+`lib/config.ts` — swap `WORKSPACE_CONTEXT` to rebrand for a different industry:
+
+```ts
+industry: "Sales"  // or: HR | Healthcare | RealEstate | Education | Agency
+```
+
+This changes labels throughout the app (Contact → Candidate, Deal → Application, etc.).
