@@ -22,13 +22,13 @@ export default function LandingPage() {
         </div>
         <div className="flex items-center gap-6">
           <Link
-            href="/signin?flow=signIn"
+            href="/login"
             className="hidden sm:inline-flex text-sm font-semibold tracking-tight text-muted-foreground transition-colors hover:text-foreground"
           >
             Log in
           </Link>
           <Link
-            href="/signin?flow=signUp"
+            href="/signup"
             className="inline-flex h-10 items-center rounded-full bg-foreground px-6 text-sm font-semibold text-background transition-transform hover:scale-105 active:scale-95"
           >
             Get Started
@@ -54,7 +54,7 @@ export default function LandingPage() {
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Link
-                href="/signin?flow=signUp"
+                href="/signup"
                 className="inline-flex h-14 items-center rounded-full bg-foreground px-8 text-lg font-semibold tracking-tight text-background transition-transform hover:scale-105 active:scale-95"
               >
                 Get Started
@@ -137,7 +137,7 @@ export default function LandingPage() {
             className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             <Link
-              href="/signin?flow=signUp"
+              href="/signup"
               className="inline-flex w-full sm:w-auto h-16 items-center justify-center rounded-full bg-background px-10 text-xl font-bold tracking-tight text-foreground transition-transform hover:scale-105"
             >
               Get Started for free

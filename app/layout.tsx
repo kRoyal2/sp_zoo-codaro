@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
-import { Sidebar } from "@/components/Sidebar";
+
 import { SeedProvider } from "@/components/SeedProvider";
 import { Toaster } from "sonner";
 
@@ -37,12 +37,7 @@ export default function RootLayout({
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <ConvexClientProvider>
             <SeedProvider>
-              <div className="flex h-screen overflow-hidden bg-[#f8fafc]">
-                <Sidebar />
-                <main className="flex-1 overflow-y-auto">
-                  {children}
-                </main>
-              </div>
+              {children}
               <Toaster richColors position="top-right" />
             </SeedProvider>
           </ConvexClientProvider>

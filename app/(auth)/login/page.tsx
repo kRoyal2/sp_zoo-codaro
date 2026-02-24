@@ -9,8 +9,7 @@ import { api } from "@/convex/_generated/api";
 
 function SignInForm() {
   const { signIn } = useAuthActions();
-  const searchParams = useSearchParams();
-  const initialFlow = searchParams.get("flow") === "signUp" ? "signUp" : "signIn";
+  const initialFlow = "signIn";
   const [flow, setFlow] = useState<"signIn" | "signUp">(initialFlow);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -204,7 +203,7 @@ function SignInForm() {
 
           {error && (
             <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 mt-2">
-              <p className="text-red-600 dark:text-red-400 font-bold text-sm tracking-tight break-words">
+              <p className="text-red-600 dark:text-red-400 font-bold text-sm tracking-tight wrap-break-word">
                 {error}
               </p>
             </div>
