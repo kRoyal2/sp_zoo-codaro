@@ -69,166 +69,174 @@ function SignInForm() {
   };
 
   return (
-    <div className="flex flex-col gap-8 w-full max-w-lg mx-auto min-h-screen justify-center items-center px-4 py-8">
-      <div className="text-center flex flex-col items-center gap-4">
-        <div className="flex items-center gap-6">
-          <Image src="/convex.svg" alt="Convex Logo" width={90} height={90} />
-          <div className="w-px h-20 bg-slate-300 dark:bg-slate-600"></div>
-          <Image
-            src="/nextjs-icon-light-background.svg"
-            alt="Next.js Logo"
-            width={90}
-            height={90}
-            className="dark:hidden"
-          />
-          <Image
-            src="/nextjs-icon-dark-background.svg"
-            alt="Next.js Logo"
-            width={90}
-            height={90}
-            className="hidden dark:block"
-          />
-        </div>
-        <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-200">
-          SP Zoo Management System
-        </h1>
-        <p className="text-slate-600 dark:text-slate-400">
-          {flow === "signIn"
-            ? "Sign in to access your account"
-            : "Create a new worker account"}
-        </p>
-      </div>
-      
-      <form
-        className="flex flex-col gap-4 w-full bg-slate-100 dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-300 dark:border-slate-600"
-        onSubmit={handleSubmit}
-      >
-        {flow === "signUp" && (
-          <>
-            <div className="grid grid-cols-2 gap-4">
-              <input
-                className="bg-white dark:bg-slate-900 text-foreground rounded-lg p-3 border border-slate-300 dark:border-slate-600 focus:border-slate-500 dark:focus:border-slate-400 focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700 outline-none transition-all placeholder:text-slate-400"
-                type="text"
-                name="name"
-                placeholder="First Name"
-                required
-              />
-              <input
-                className="bg-white dark:bg-slate-900 text-foreground rounded-lg p-3 border border-slate-300 dark:border-slate-600 focus:border-slate-500 dark:focus:border-slate-400 focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700 outline-none transition-all placeholder:text-slate-400"
-                type="text"
-                name="surname"
-                placeholder="Last Name"
-                required
-              />
-            </div>
-
-            <select
-              className="bg-white dark:bg-slate-900 text-foreground rounded-lg p-3 border border-slate-300 dark:border-slate-600 focus:border-slate-500 dark:focus:border-slate-400 focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700 outline-none transition-all"
-              name="department"
-              required
-            >
-              <option value="">Select Department</option>
-              <option value="Operations">Operations</option>
-              <option value="Maintenance">Maintenance</option>
-              <option value="Customer Service">Customer Service</option>
-              <option value="Administration">Administration</option>
-              <option value="Security">Security</option>
-            </select>
-
-            <select
-              className="bg-white dark:bg-slate-900 text-foreground rounded-lg p-3 border border-slate-300 dark:border-slate-600 focus:border-slate-500 dark:focus:border-slate-400 focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700 outline-none transition-all"
-              name="position"
-              value={selectedPosition}
-              onChange={(e) => setSelectedPosition(e.target.value)}
-              required
-            >
-              <option value="">Select Position</option>
-              <option value="Manager">Manager</option>
-              <option value="Zookeeper">Zookeeper</option>
-              <option value="Veterinarian">Veterinarian</option>
-              <option value="Maintenance Worker">Maintenance Worker</option>
-              <option value="Customer Service Representative">Customer Service Representative</option>
-              <option value="Security Guard">Security Guard</option>
-              <option value="Animal Trainer">Animal Trainer</option>
-              <option value="Nutritionist">Nutritionist</option>
-              <option value="Administrative Assistant">Administrative Assistant</option>
-            </select>
-          </>
-        )}
-
-        <input
-          className="bg-white dark:bg-slate-900 text-foreground rounded-lg p-3 border border-slate-300 dark:border-slate-600 focus:border-slate-500 dark:focus:border-slate-400 focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700 outline-none transition-all placeholder:text-slate-400"
-          type="email"
-          name="email"
-          placeholder="Email"
-          required
-        />
+    <div className="flex flex-col w-full min-h-screen justify-center items-center px-4 py-12 bg-background selection:bg-foreground selection:text-background">
+      <div className="flex flex-col gap-10 w-full max-w-[480px]">
         
-        <div className="flex flex-col gap-1">
+        {/* Header */}
+        <div className="flex flex-col items-center text-center gap-6">
+          <div className="flex items-center gap-5">
+            <Image src="/convex.svg" alt="Convex Logo" width={60} height={60} />
+            <div className="w-px h-12 bg-border"></div>
+            <Image
+              src="/nextjs-icon-light-background.svg"
+              alt="Next.js Logo"
+              width={60}
+              height={60}
+              className="dark:hidden"
+            />
+            <Image
+              src="/nextjs-icon-dark-background.svg"
+              alt="Next.js Logo"
+              width={60}
+              height={60}
+              className="hidden dark:block"
+            />
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-4xl sm:text-5xl font-bold tracking-tighter text-foreground">
+              {flow === "signIn" ? "Welcome back." : "Create account."}
+            </h1>
+            <p className="text-lg font-medium text-muted-foreground">
+              {flow === "signIn"
+                ? "Sign in to access the SP Zoo OS"
+                : "Register a new worker profile"}
+            </p>
+          </div>
+        </div>
+        
+        {/* Form Card */}
+        <form
+          className="flex flex-col gap-5 w-full bg-card p-8 sm:p-10 rounded-[2.5rem] border border-border shadow-2xl shadow-black/5 dark:shadow-white/5"
+          onSubmit={handleSubmit}
+        >
+          {flow === "signUp" && (
+            <>
+              <div className="grid grid-cols-2 gap-5">
+                <input
+                  className="bg-background text-foreground rounded-2xl p-4 border border-border focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all placeholder:text-muted-foreground font-medium"
+                  type="text"
+                  name="name"
+                  placeholder="First Name"
+                  required
+                />
+                <input
+                  className="bg-background text-foreground rounded-2xl p-4 border border-border focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all placeholder:text-muted-foreground font-medium"
+                  type="text"
+                  name="surname"
+                  placeholder="Last Name"
+                  required
+                />
+              </div>
+
+              <select
+                className="bg-background text-foreground rounded-2xl p-4 border border-border focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all font-medium appearance-none"
+                name="department"
+                required
+              >
+                <option value="">Select Department</option>
+                <option value="Operations">Operations</option>
+                <option value="Maintenance">Maintenance</option>
+                <option value="Customer Service">Customer Service</option>
+                <option value="Administration">Administration</option>
+                <option value="Security">Security</option>
+              </select>
+
+              <select
+                className="bg-background text-foreground rounded-2xl p-4 border border-border focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all font-medium appearance-none"
+                name="position"
+                value={selectedPosition}
+                onChange={(e) => setSelectedPosition(e.target.value)}
+                required
+              >
+                <option value="">Select Position</option>
+                <option value="Manager">Manager</option>
+                <option value="Zookeeper">Zookeeper</option>
+                <option value="Veterinarian">Veterinarian</option>
+                <option value="Maintenance Worker">Maintenance Worker</option>
+                <option value="Customer Service Representative">Customer Service Representative</option>
+                <option value="Security Guard">Security Guard</option>
+                <option value="Animal Trainer">Animal Trainer</option>
+                <option value="Nutritionist">Nutritionist</option>
+                <option value="Administrative Assistant">Administrative Assistant</option>
+              </select>
+            </>
+          )}
+
           <input
-            className="bg-white dark:bg-slate-900 text-foreground rounded-lg p-3 border border-slate-300 dark:border-slate-600 focus:border-slate-500 dark:focus:border-slate-400 focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700 outline-none transition-all placeholder:text-slate-400"
-            type="password"
-            name="password"
-            placeholder="Password"
-            minLength={8}
+            className="bg-background text-foreground rounded-2xl p-4 border border-border focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all placeholder:text-muted-foreground font-medium"
+            type="email"
+            name="email"
+            placeholder="Work Email"
             required
           />
-          {flow === "signUp" && (
-            <p className="text-xs text-slate-500 dark:text-slate-400 px-1">
-              Password must be at least 8 characters
-            </p>
-          )}
-        </div>
-
-        {flow === "signUp" && selectedPosition === "Manager" && (
-          <div className="flex flex-col gap-1">
+          
+          <div className="flex flex-col gap-2">
             <input
-              className="bg-white dark:bg-slate-900 text-foreground rounded-lg p-3 border border-slate-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-700 outline-none transition-all placeholder:text-slate-400"
+              className="bg-background text-foreground rounded-2xl p-4 border border-border focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all placeholder:text-muted-foreground font-medium"
               type="password"
-              name="managerPassword"
-              placeholder="Manager Authorization Password"
+              name="password"
+              placeholder="Password"
+              minLength={8}
               required
             />
-            <p className="text-xs text-blue-600 dark:text-blue-400 px-1">
-              ⚠️ Manager position requires authorization password
-            </p>
+            {flow === "signUp" && (
+              <p className="text-sm font-medium text-muted-foreground px-2">
+                Must be at least 8 characters
+              </p>
+            )}
           </div>
-        )}
 
-        <button
-          className="bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:hover:bg-slate-500 text-white font-semibold rounded-lg py-3 shadow-md hover:shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-          type="submit"
-          disabled={loading}
-        >
-          {loading ? "Loading..." : flow === "signIn" ? "Sign in" : "Sign up"}
-        </button>
-        
-        <div className="flex flex-row gap-2 text-sm justify-center">
-          <span className="text-slate-600 dark:text-slate-400">
-            {flow === "signIn"
-              ? "Don't have an account?"
-              : "Already have an account?"}
-          </span>
-          <span
-            className="text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 font-medium underline decoration-2 underline-offset-2 hover:no-underline cursor-pointer transition-colors"
-            onClick={() => {
-              setFlow(flow === "signIn" ? "signUp" : "signIn");
-              setSelectedPosition("");
-              setError(null);
-            }}
+          {flow === "signUp" && selectedPosition === "Manager" && (
+            <div className="flex flex-col gap-2 mt-2">
+              <input
+                className="bg-background text-foreground rounded-2xl p-4 border border-foreground focus:border-foreground focus:ring-2 focus:ring-foreground outline-none transition-all placeholder:text-muted-foreground font-medium"
+                type="password"
+                name="managerPassword"
+                placeholder="Manager Authorization Password"
+                required
+              />
+              <p className="text-sm font-bold text-foreground px-2 flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
+                Authorization required
+              </p>
+            </div>
+          )}
+
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 mt-2">
+              <p className="text-red-600 dark:text-red-400 font-bold text-sm tracking-tight break-words">
+                {error}
+              </p>
+            </div>
+          )}
+
+          <button
+            className="mt-4 w-full bg-foreground text-background font-bold text-lg rounded-2xl py-4 transition-all duration-200 hover:opacity-90 active:scale-[0.98] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
+            type="submit"
+            disabled={loading}
           >
-            {flow === "signIn" ? "Sign up" : "Sign in"}
-          </span>
-        </div>
-        
-        {error && (
-          <div className="bg-rose-500/10 border border-rose-500/30 dark:border-rose-500/50 rounded-lg p-4">
-            <p className="text-rose-700 dark:text-rose-300 font-medium text-sm break-words">
-              Error: {error}
-            </p>
+            {loading ? "Authenticating..." : flow === "signIn" ? "Sign in to Workspace" : "Create Account"}
+          </button>
+          
+          <div className="mt-4 flex flex-row gap-2 text-base justify-center font-medium">
+            <span className="text-muted-foreground">
+              {flow === "signIn"
+                ? "New to the system?"
+                : "Already registered?"}
+            </span>
+            <span
+              className="text-foreground font-bold underline decoration-2 underline-offset-4 hover:text-muted-foreground cursor-pointer transition-colors"
+              onClick={() => {
+                setFlow(flow === "signIn" ? "signUp" : "signIn");
+                setSelectedPosition("");
+                setError(null);
+              }}
+            >
+              {flow === "signIn" ? "Sign up" : "Sign in"}
+            </span>
           </div>
-        )}
-      </form>
+        </form>
+      </div>
     </div>
   );
 }
