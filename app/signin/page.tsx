@@ -55,12 +55,12 @@ function SignInForm() {
           position,
         });
 
-        router.push("/main");
+        router.push("/onboarding");
       } else {
         // Sign in flow
         formData.set("flow", "signIn");
         await signIn("password", formData);
-        router.push("/main");
+        router.push("/dashboard");
       }
     } catch (error: any) {
       setError(error.message);
@@ -230,5 +230,13 @@ function SignInForm() {
         )}
       </form>
     </div>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense>
+      <SignInForm />
+    </Suspense>
   );
 }
