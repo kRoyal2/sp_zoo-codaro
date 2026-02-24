@@ -14,6 +14,8 @@ import type * as automations from "../automations.js";
 import type * as checkin from "../checkin.js";
 import type * as contacts from "../contacts.js";
 import type * as deals from "../deals.js";
+import type * as endpoints_checkins from "../endpoints/checkins.js";
+import type * as endpoints_hikers from "../endpoints/hikers.js";
 import type * as hiker from "../hiker.js";
 import type * as http from "../http.js";
 import type * as incidents from "../incidents.js";
@@ -40,6 +42,8 @@ declare const fullApi: ApiFromModules<{
   checkin: typeof checkin;
   contacts: typeof contacts;
   deals: typeof deals;
+  "endpoints/checkins": typeof endpoints_checkins;
+  "endpoints/hikers": typeof endpoints_hikers;
   hiker: typeof hiker;
   http: typeof http;
   incidents: typeof incidents;
