@@ -1,234 +1,162 @@
 "use client";
 
-import { useConvexAuth, useMutation, useQuery } from "convex/react";
-import { api } from "../convex/_generated/api";
-import Link from "next/link";
-import { useAuthActions } from "@convex-dev/auth/react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Users, DollarSign, CheckSquare, BookOpen, TrendingUp, Plus } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { WORKSPACE_CONTEXT as WC } from "@/lib/config";
+import { formatCurrency, formatRelativeTime } from "@/lib/utils";
 
-export default function Home() {
-  return (
-    <>
-      <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-md p-4 border-b border-slate-200 dark:border-slate-700 flex flex-row justify-between items-center shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-3">
-            <Image src="/convex.svg" alt="Convex Logo" width={32} height={32} />
-            <div className="w-px h-8 bg-slate-300 dark:bg-slate-600"></div>
-            <Image
-              src="/nextjs-icon-light-background.svg"
-              alt="Next.js Logo"
-              width={32}
-              height={32}
-              className="dark:hidden"
-            />
-            <Image
-              src="/nextjs-icon-dark-background.svg"
-              alt="Next.js Logo"
-              width={32}
-              height={32}
-              className="hidden dark:block"
-            />
-          </div>
-          <h1 className="font-semibold text-slate-800 dark:text-slate-200">
-            Convex + Next.js + Convex Auth
-          </h1>
-        </div>
-        <SignOutButton />
-      </header>
-      <main className="p-8 flex flex-col gap-8">
-        <Content />
-      </main>
-    </>
-  );
-}
+export default function DashboardPage() {
+  const stats = useQuery(api.analytics.getDashboardStats);
+  const events = useQuery(api.analytics.listRecentEvents, { limit: 10 });
+  const createContact = useMutation(api.contacts.createContact);
 
-function SignOutButton() {
-  const { isAuthenticated } = useConvexAuth();
-  const { signOut } = useAuthActions();
-  const router = useRouter();
-  return (
-    <>
-      {isAuthenticated && (
-        <button
-          className="bg-slate-600 hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 text-white rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer"
-          onClick={() =>
-            void signOut().then(() => {
-              router.push("/signin");
-            })
-          }
-        >
-          Sign out
-        </button>
-      )}
-    </>
-  );
-}
+  const [form, setForm] = useState({ name: "", email: "", company: "", stage: "Lead" });
+  const [submitting, setSubmitting] = useState(false);
 
-function Content() {
-  const { viewer, numbers } =
-    useQuery(api.myFunctions.listNumbers, {
-      count: 10,
-    }) ?? {};
-  const addNumber = useMutation(api.myFunctions.addNumber);
-
-  if (viewer === undefined || numbers === undefined) {
-    return (
-      <div className="mx-auto">
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
-          <div
-            className="w-2 h-2 bg-slate-500 rounded-full animate-bounce"
-            style={{ animationDelay: "0.1s" }}
-          ></div>
-          <div
-            className="w-2 h-2 bg-slate-600 rounded-full animate-bounce"
-            style={{ animationDelay: "0.2s" }}
-          ></div>
-          <p className="ml-2 text-slate-600 dark:text-slate-400">Loading...</p>
-        </div>
-      </div>
-    );
-  }
+  const handleQuickAdd = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name || !form.email || !form.company) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await createContact({ name: form.name, email: form.email, company: form.company, stage: form.stage, score: 50, tags: [], notes: "" });
+      toast.success(`${WC.contactLabel} added successfully`);
+      setForm({ name: "", email: "", company: "", stage: "Lead" });
+    } catch {
+      toast.error("Failed to add contact");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
-    <div className="flex flex-col gap-4 max-w-lg mx-auto">
+    <div className="p-6 space-y-6">
       <div>
-        <h2 className="font-bold text-xl text-slate-800 dark:text-slate-200">
-          Welcome {viewer ?? "Anonymous"}!
-        </h2>
-        <p className="text-slate-600 dark:text-slate-400 mt-2">
-          You are signed into a demo application using Convex Auth.
-        </p>
-        <p className="text-slate-600 dark:text-slate-400 mt-1">
-          This app can generate random numbers and store them in your Convex
-          database.
-        </p>
+        <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
+        <p className="text-slate-500 text-sm mt-1">Welcome back — here&apos;s what&apos;s happening</p>
       </div>
 
-      <div className="h-px bg-slate-200 dark:bg-slate-700"></div>
-
-      <div className="flex flex-col gap-4">
-        <h2 className="font-semibold text-xl text-slate-800 dark:text-slate-200">
-          Number generator
-        </h2>
-        <p className="text-slate-600 dark:text-slate-400 text-sm">
-          Click the button below to generate a new number. The data is persisted
-          in the Convex cloud database - open this page in another window and
-          see the data sync automatically!
-        </p>
-        <button
-          className="bg-slate-700 hover:bg-slate-800 dark:bg-slate-600 dark:hover:bg-slate-500 text-white text-sm font-medium px-6 py-3 rounded-lg cursor-pointer transition-all duration-200 shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
-          onClick={() => {
-            void addNumber({ value: Math.floor(Math.random() * 10) });
-          }}
-        >
-          + Generate random number
-        </button>
-        <div className="bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl p-4 shadow-sm">
-          <p className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
-            Newest Numbers
-          </p>
-          <p className="text-slate-700 dark:text-slate-300 font-mono text-lg">
-            {numbers?.length === 0
-              ? "Click the button to generate a number!"
-              : (numbers?.join(", ") ?? "...")}
-          </p>
-        </div>
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <KpiCard title={`Total ${WC.contactLabel}s`} value={stats?.totalContacts ?? null} icon={<Users className="h-5 w-5 text-indigo-600" />} bg="bg-indigo-50" />
+        <KpiCard title={`Open ${WC.dealLabel}s`} value={stats ? formatCurrency(stats.openDealsValue, WC.currency) : null} subtitle={stats ? `${stats.openDealsCount} open` : undefined} icon={<DollarSign className="h-5 w-5 text-emerald-600" />} bg="bg-emerald-50" />
+        <KpiCard title="Tasks Due Today" value={stats?.tasksDueToday ?? null} icon={<CheckSquare className="h-5 w-5 text-amber-600" />} bg="bg-amber-50" />
+        <KpiCard title="Onboarding Active" value={stats?.onboardingInProgress ?? null} icon={<BookOpen className="h-5 w-5 text-violet-600" />} bg="bg-violet-50" />
       </div>
 
-      <div className="h-px bg-slate-200 dark:bg-slate-700"></div>
+      {/* Activity + Quick Add */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-indigo-600" /> Recent Activity
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {events === undefined ? (
+              <div className="space-y-3">{[...Array(5)].map((_, i) => <Skeleton key={i} className="h-10 w-full" />)}</div>
+            ) : events.length === 0 ? (
+              <p className="text-sm text-slate-400 text-center py-8">No activity yet</p>
+            ) : (
+              <div className="space-y-2">
+                {events.map((event) => (
+                  <div key={event._id} className="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
+                    <div className="flex items-center gap-3">
+                      <div className="h-2 w-2 rounded-full bg-indigo-500 shrink-0" />
+                      <div>
+                        <p className="text-sm font-medium text-slate-700 capitalize">{event.type.replace(/_/g, " ")}</p>
+                        <p className="text-xs text-slate-400 capitalize">{event.entityType}</p>
+                      </div>
+                    </div>
+                    <span className="text-xs text-slate-400">{formatRelativeTime(event.timestamp)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
-      <div className="flex flex-col gap-4">
-        <h2 className="font-semibold text-xl text-slate-800 dark:text-slate-200">
-          Making changes
-        </h2>
-        <p className="text-slate-600 dark:text-slate-400 text-sm">
-          Edit{" "}
-          <code className="text-sm font-semibold font-mono bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-2 py-1 rounded-md border border-slate-300 dark:border-slate-600">
-            convex/myFunctions.ts
-          </code>{" "}
-          to change the backend.
-        </p>
-        <p className="text-slate-600 dark:text-slate-400 text-sm">
-          Edit{" "}
-          <code className="text-sm font-semibold font-mono bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-2 py-1 rounded-md border border-slate-300 dark:border-slate-600">
-            app/page.tsx
-          </code>{" "}
-          to change the frontend.
-        </p>
-        <p className="text-slate-600 dark:text-slate-400 text-sm">
-          See the{" "}
-          <Link
-            href="/server"
-            className="text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 font-medium underline decoration-2 underline-offset-2 transition-colors"
-          >
-            /server route
-          </Link>{" "}
-          for an example of loading data in a server component
-        </p>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Plus className="h-4 w-4 text-indigo-600" /> Quick Add {WC.contactLabel}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleQuickAdd} className="space-y-3">
+              <div className="space-y-1">
+                <Label htmlFor="q-name">Name *</Label>
+                <Input id="q-name" placeholder="Full name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="q-email">Email *</Label>
+                <Input id="q-email" type="email" placeholder="email@company.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="q-company">Company *</Label>
+                <Input id="q-company" placeholder="Company name" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
+              </div>
+              <div className="space-y-1">
+                <Label>Stage</Label>
+                <Select value={form.stage} onValueChange={(v) => setForm({ ...form, stage: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>{WC.stageLabels.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <Button type="submit" className="w-full" disabled={submitting}>
+                {submitting ? "Adding..." : `Add ${WC.contactLabel}`}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
 
-      <div className="h-px bg-slate-200 dark:bg-slate-700"></div>
-
-      <div className="flex flex-col gap-4">
-        <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200">
-          Useful resources
-        </h2>
-        <div className="flex gap-4">
-          <div className="flex flex-col gap-4 w-1/2">
-            <ResourceCard
-              title="Convex docs"
-              description="Read comprehensive documentation for all Convex features."
-              href="https://docs.convex.dev/home"
-            />
-            <ResourceCard
-              title="Stack articles"
-              description="Learn about best practices, use cases, and more from a growing
-            collection of articles, videos, and walkthroughs."
-              href="https://stack.convex.dev"
-            />
+      {/* Pipeline Overview */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">Pipeline Overview</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {["Lead", "Qualified", "Proposal", "Closed Won"].map((stage) => (
+              <div key={stage} className="text-center p-4 rounded-lg bg-slate-50 border border-slate-100">
+                <p className="text-2xl font-bold text-slate-900">
+                  {stats !== undefined ? (stats.dealsByStage[stage] ?? 0) : <Skeleton className="h-8 w-8 mx-auto" />}
+                </p>
+                <p className="text-xs text-slate-500 mt-1">{stage}</p>
+              </div>
+            ))}
           </div>
-          <div className="flex flex-col gap-4 w-1/2">
-            <ResourceCard
-              title="Templates"
-              description="Browse our collection of templates to get started quickly."
-              href="https://www.convex.dev/templates"
-            />
-            <ResourceCard
-              title="Discord"
-              description="Join our developer community to ask questions, trade tips & tricks,
-            and show off your projects."
-              href="https://www.convex.dev/community"
-            />
-          </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
 
-function ResourceCard({
-  title,
-  description,
-  href,
-}: {
-  title: string;
-  description: string;
-  href: string;
-}) {
+function KpiCard({ title, value, subtitle, icon, bg }: { title: string; value: string | number | null; subtitle?: string; icon: React.ReactNode; bg: string }) {
   return (
-    <a
-      href={href}
-      className="flex flex-col gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 p-5 rounded-xl h-36 overflow-auto border border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02] group cursor-pointer"
-      target="_blank"
-    >
-      <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">
-        {title} →
-      </h3>
-      <p className="text-xs text-slate-600 dark:text-slate-400">
-        {description}
-      </p>
-    </a>
+    <Card>
+      <CardContent className="p-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-slate-500">{title}</p>
+            {value === null ? <Skeleton className="h-8 w-24 mt-1" /> : <p className="text-2xl font-bold text-slate-900 mt-1">{value}</p>}
+            {subtitle && <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>}
+          </div>
+          <div className={`p-3 rounded-xl ${bg}`}>{icon}</div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

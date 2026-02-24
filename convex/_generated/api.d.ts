@@ -8,9 +8,16 @@
  * @module
  */
 
+import type * as analytics from "../analytics.js";
 import type * as auth from "../auth.js";
+import type * as automations from "../automations.js";
+import type * as contacts from "../contacts.js";
+import type * as deals from "../deals.js";
 import type * as http from "../http.js";
-import type * as myFunctions from "../myFunctions.js";
+import type * as onboarding from "../onboarding.js";
+import type * as seed from "../seed.js";
+import type * as settings from "../settings.js";
+import type * as tasks from "../tasks.js";
 
 import type {
   ApiFromModules,
@@ -19,9 +26,16 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  analytics: typeof analytics;
   auth: typeof auth;
+  automations: typeof automations;
+  contacts: typeof contacts;
+  deals: typeof deals;
   http: typeof http;
-  myFunctions: typeof myFunctions;
+  onboarding: typeof onboarding;
+  seed: typeof seed;
+  settings: typeof settings;
+  tasks: typeof tasks;
 }>;
 
 /**
