@@ -47,3 +47,13 @@ export function isDueToday(dueDate: number): boolean {
     today.getDate() === due.getDate()
   );
 }
+
+export function formatDateTime(timestamp: number): string {
+  return new Date(timestamp).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}

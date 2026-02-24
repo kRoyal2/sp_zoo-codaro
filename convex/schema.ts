@@ -9,7 +9,7 @@ export default defineSchema({
     organizationId: v.optional(v.id("organizations")),
     role: v.optional(v.string()), // "owner", etc.
   }).index("email", ["email"]).index("phone", ["phone"]),
-  
+
   organizations: defineTable({
     name: v.string(),
     industry: v.optional(v.string()),
@@ -52,6 +52,13 @@ export default defineSchema({
     .index("by_stage", ["stage"])
     .index("by_contact", ["contactId"])
     .index("by_owner", ["ownerId"]),
+
+  pipeline_comments: defineTable({
+    dealId: v.id("deals"),
+    comment: v.string(),
+    addedBy: v.string(), // User name or ID
+    createdAt: v.number(),
+  }).index("by_deal", ["dealId"]),
 
   tasks: defineTable({
     title: v.string(),
@@ -112,22 +119,20 @@ export default defineSchema({
     enabled: v.boolean(),
   }),
 
-  // Worker profiles with extended information
   workers: defineTable({
-    userId: v.id("users"), // Link to auth users table
+    userId: v.id("users"),
     name: v.string(),
     surname: v.string(),
     department: v.string(),
     position: v.string(),
-    status: v.string(), // "active", "inactive", "pending"
-    hireDate: v.number(), // timestamp
+    status: v.string(),
+    hireDate: v.number(),
   }).index("by_user", ["userId"]),
 
-  // Manager passwords for signup verification
   managerPasswords: defineTable({
-    password: v.string(), // Hashed password
+    password: v.string(),
     department: v.string(),
-    name: v.string(), // Manager name for reference
+    name: v.string(),
     isActive: v.boolean(),
   }),
 

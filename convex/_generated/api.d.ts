@@ -16,6 +16,7 @@ import type * as deals from "../deals.js";
 import type * as http from "../http.js";
 import type * as myFunctions from "../myFunctions.js";
 import type * as onboarding from "../onboarding.js";
+import type * as pipelineComments from "../pipelineComments.js";
 import type * as seed from "../seed.js";
 import type * as settings from "../settings.js";
 import type * as tasks from "../tasks.js";
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   myFunctions: typeof myFunctions;
   onboarding: typeof onboarding;
+  pipelineComments: typeof pipelineComments;
   seed: typeof seed;
   settings: typeof settings;
   tasks: typeof tasks;
