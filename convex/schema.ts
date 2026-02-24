@@ -2,6 +2,8 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 import { authTables } from "@convex-dev/auth/server";
 
+
+
 export default defineSchema({
   ...authTables,
   users: defineTable({
@@ -18,9 +20,23 @@ export default defineSchema({
     createdAt: v.number(),
   }),
 
-  numbers: defineTable({
-    value: v.number(),
+  hiker: defineTable({
+    name: v.string(),
+    age: v.number(),
+    height: v.number(),
+    weight: v.number(),
+    experienceLevel: v.string(),
+    contactInfo: v.string(),
+    status: v.string(), // In way, Lost, Finished 
   }),
+
+  checkin: defineTable({
+    hikerId: v.id("hiker"),
+    geolocation: v.string(),
+    message: v.optional(v.string()),
+    datetime: v.number(),
+  }).index("by_hiker", ["hikerId"]),
+
 
   contacts: defineTable({
     name: v.string(),
@@ -59,6 +75,36 @@ export default defineSchema({
     addedBy: v.string(), // User name or ID
     createdAt: v.number(),
   }).index("by_deal", ["dealId"]),
+
+  incidents: defineTable({
+    status: v.string(),
+    severity: v.string(),
+    description: v.string(),
+    reportedBy: v.string(),
+    assignedTo: v.optional(v.id('rescueGroup')),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+    last_known_location: v.optional(v.string()),
+    terrain_type: v.optional(v.string()),
+    score: v.number(),
+  }),
+
+  rescueGroup: defineTable({
+    name: v.string(),
+    contact_info: v.string(),
+    availability_status: v.string(),
+    current_status: v.string(),
+  }),
+
+  // Internal rescue team communications
+  rescue_communications: defineTable({
+    incidentId: v.id("incidents"),
+    rescueGroupId: v.id("rescueGroup"),
+    message: v.string(),
+    messageType: v.string(), // "status_update", "request", "coordinate"
+    createdAt: v.number(),
+  }).index("by_incident", ["incidentId"])
+    .index("by_group", ["rescueGroupId"]),
 
   tasks: defineTable({
     title: v.string(),
