@@ -117,6 +117,50 @@ export const listHikers = query({
   },
 });
 
+export const listHikersLiveTracking = query({
+  args: {},
+  returns: v.array(
+    v.object({
+      _id: v.id("hikers"),
+      telegram_user_id: v.number(),
+      telegram_username: v.optional(v.string()),
+      status: v.string(),
+      lastSeenAt: v.optional(v.number()),
+      geo_lat: v.optional(v.number()),
+      geo_lon: v.optional(v.number()),
+      geo_updated_at: v.optional(v.number()),
+    })
+  ),
+  handler: async (ctx) => {
+    const hikers = await ctx.db.query("hikers").order("desc").collect();
+
+    return await Promise.all(
+      hikers.map(async (hiker) => {
+        const messages = await ctx.db
+          .query("hiker_messages")
+          .withIndex("by_hiker_and_datetime", (q) => q.eq("hiker_id", hiker._id))
+          .order("desc")
+          .collect();
+
+        const latestGeo = messages.find(
+          (message) => message.geo_lat !== undefined && message.geo_lon !== undefined
+        );
+
+        return {
+          _id: hiker._id,
+          telegram_user_id: hiker.telegram_user_id,
+          telegram_username: hiker.telegram_username,
+          status: hiker.status,
+          lastSeenAt: hiker.lastSeenAt,
+          geo_lat: latestGeo?.geo_lat,
+          geo_lon: latestGeo?.geo_lon,
+          geo_updated_at: latestGeo?.datetime,
+        };
+      })
+    );
+  },
+});
+
 export const getHiker = query({
   args: { hikerId: v.id("hikers") },
   returns: v.union(HIKER_DOC, v.null()),

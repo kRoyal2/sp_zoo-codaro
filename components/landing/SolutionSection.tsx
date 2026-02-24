@@ -4,10 +4,10 @@ import { motion } from "framer-motion";
 import { CheckCircle2, Server, Database, Shield, Activity } from "lucide-react";
 
 const points = [
-  "One unified system for all operations",
-  "Real-time data — no stale reports",
-  "Modular by design — use what you need",
-  "Built for uncompromising scale",
+  "Hikers trigger emergency alerts directly through Telegram",
+  "Automated risk assessment and prioritization for each incident",
+  "Live command center coordination across all active rescues",
+  "Automated escalation and notifications through workflow rules",
 ];
 
 export default function SolutionSection() {
@@ -23,11 +23,10 @@ export default function SolutionSection() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-4xl font-bold tracking-tighter text-foreground sm:text-5xl md:text-6xl">
-              One engine. <br /> Total clarity.
+              Event-driven rescue <br /> orchestration.
             </h2>
             <p className="mt-8 text-xl font-medium leading-relaxed text-muted-foreground max-w-lg">
-              CoreStack OS replaces your patchwork stack with a single, modular control layer — so
-              your team always knows what's happening, instantly.
+              RescueStack is built for life-critical incidents, not generic management. It transforms incoming alerts into coordinated rescue actions in real time.
             </p>
             <ul className="mt-12 flex flex-col gap-6">
               {points.map((point) => (
@@ -50,19 +49,19 @@ export default function SolutionSection() {
             className="p-8 sm:p-12 rounded-[2.5rem] bg-card border border-border shadow-xl"
           >
             <div className="flex items-center justify-between mb-10">
-              <span className="text-2xl font-bold tracking-tight text-foreground">System Status</span>
-              <span className="flex items-center gap-2 text-sm font-bold px-4 py-1.5 rounded-full bg-[#000000] text-white dark:bg-[#ffffff] dark:text-black">
-                <span className="w-2 h-2 rounded-full bg-[#00e691]" />
+              <span className="text-2xl font-bold tracking-tight text-foreground">Incident Stream</span>
+              <span className="flex items-center gap-2 text-sm font-bold px-4 py-1.5 rounded-full bg-foreground text-background">
+                <span className="w-2 h-2 rounded-full bg-background" />
                 Live
               </span>
             </div>
 
             <div className="flex flex-col gap-8">
               {[
-                { name: "Ops Engine", pct: 97, icon: Server },
-                { name: "Data Sync", pct: 100, icon: Database },
-                { name: "Security", pct: 89, icon: Shield },
-                { name: "Network", pct: 94, icon: Activity },
+                { name: "Telegram Intake", pct: 99, icon: Server },
+                { name: "Risk Scoring", pct: 96, icon: Database },
+                { name: "Responder Routing", pct: 92, icon: Shield },
+                { name: "Escalation Engine", pct: 98, icon: Activity },
               ].map((item, i) => (
                 <motion.div 
                   key={item.name} 
@@ -96,8 +95,8 @@ export default function SolutionSection() {
 
             <div className="mt-12 pt-10 border-t border-border grid grid-cols-2 gap-6">
               {[
-                { label: "Uptime", value: "99.98%" },
-                { label: "Latency", value: "< 40ms" },
+                { label: "Dispatch Lead Time", value: "-42%" },
+                { label: "Incident Visibility", value: "Live" },
               ].map((s) => (
                 <div
                   key={s.label}

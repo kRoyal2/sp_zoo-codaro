@@ -6,33 +6,33 @@ import { Zap, Layers, Lock, BarChart3, BellRing, Link } from "lucide-react";
 const features = [
   {
     icon: Zap,
-    title: "Real-Time Sync",
-    description: "Every update is reflected instantly across your entire team. Zero lag, zero drift.",
+    title: "Telegram SOS Intake",
+    description: "Hikers can trigger emergency alerts from Telegram, instantly creating structured incidents for responders.",
   },
   {
     icon: Layers,
-    title: "Modular Architecture",
-    description: "Enable only what your team needs. Every module is purpose-built for serious ops.",
+    title: "Event-Driven Workflows",
+    description: "Every incident event triggers the next action automatically, from intake to assignment and follow-through.",
   },
   {
     icon: Lock,
-    title: "Role-Based Access",
-    description: "Granular permissions so the right people see the right data, nothing more.",
+    title: "Role-Aware Command Access",
+    description: "Dispatch, coordinators, and field teams see the right operational view without losing shared context.",
   },
   {
     icon: BarChart3,
-    title: "Deep Analytics",
-    description: "Live dashboards and historical trends — built in, no third-party needed.",
+    title: "Automated Risk Prioritization",
+    description: "Incidents are scored and ranked in real time so critical rescues move to the front immediately.",
   },
   {
     icon: BellRing,
-    title: "Smart Alerts",
-    description: "Define thresholds. Get notified before issues become incidents. Stay ahead.",
+    title: "Escalation & Notifications",
+    description: "Workflow rules notify on-call responders and leadership automatically when urgency thresholds are met.",
   },
   {
     icon: Link,
-    title: "API-First",
-    description: "Integrate with anything. REST and webhooks ready out of the box.",
+    title: "Live Command Center",
+    description: "A single real-time operational picture for incident status, assignments, and cross-team coordination.",
   },
 ];
 
@@ -66,10 +66,10 @@ export default function FeatureGrid() {
           transition={{ duration: 0.5 }}
         >
           <h2 className="text-4xl font-bold tracking-tighter text-foreground sm:text-5xl md:text-6xl">
-            Everything your <br /> ops team needs.
+            Everything for <br /> rescue coordination.
           </h2>
           <p className="mt-8 max-w-2xl text-xl font-medium tracking-tight leading-relaxed text-muted-foreground">
-            No bloat. No compromise. Six core capabilities that work together seamlessly to handle massive scale.
+            Multi-channel alerts, automated triage, and real-time orchestration in one event-driven emergency response platform.
           </p>
         </motion.div>
 

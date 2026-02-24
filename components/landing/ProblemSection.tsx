@@ -6,21 +6,21 @@ import { ZapOff, Activity, Puzzle } from "lucide-react";
 const problems = [
   {
     icon: ZapOff,
-    title: "Fragmented Ops",
+    title: "Delayed Distress Intake",
     description:
-      "Juggling five tools to do one job. Context switching destroys momentum and burns cash.",
+      "Critical SOS alerts get buried across channels, slowing first response when hikers need immediate help.",
   },
   {
     icon: Activity,
-    title: "Lagging Data",
+    title: "Manual Triage Bottlenecks",
     description:
-      "Reports are outdated the moment they're built. Decisions based on yesterday's numbers.",
+      "Teams hand-score incidents manually, creating inconsistent prioritization during fast-moving mountain emergencies.",
   },
   {
     icon: Puzzle,
-    title: "Siloed Stacks",
+    title: "Fragmented Field Coordination",
     description:
-      "Your tools do not communicate. Scaling is painful, integration is impossible.",
+      "Dispatch, command, and responders operate in disconnected tools, causing avoidable delays and confusion.",
   },
 ];
 
@@ -35,10 +35,10 @@ export default function ProblemSection() {
           transition={{ duration: 0.5 }}
         >
           <h2 className="text-4xl font-bold tracking-tighter text-foreground sm:text-6xl md:text-7xl">
-            Complexity is <br className="hidden sm:block" /> slowing you down.
+            Response friction <br className="hidden sm:block" /> costs precious time.
           </h2>
           <p className="mt-8 max-w-2xl text-xl font-medium tracking-tight leading-relaxed text-muted-foreground">
-            Spreadsheets break. Dashboards lie. Growth exposes the cracks in pieced-together tech stacks.
+            In mountain rescue, delays are dangerous. RescueStack removes communication gaps and manual routing so teams act faster under pressure.
           </p>
         </motion.div>
 

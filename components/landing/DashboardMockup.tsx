@@ -19,7 +19,7 @@ export default function DashboardMockup() {
         </div>
         <div className="flex-1 flex justify-center">
           <div className="flex items-center justify-center bg-background border border-border rounded-md px-24 py-1.5">
-            <span className="text-[11px] font-semibold text-muted-foreground tracking-tight">app.corestack.co</span>
+            <span className="text-[11px] font-semibold text-muted-foreground tracking-tight">app.rescuestack.io</span>
           </div>
         </div>
       </div>
@@ -44,21 +44,21 @@ export default function DashboardMockup() {
           {/* Header */}
           <div className="flex justify-between items-center border-b border-border pb-6">
             <div>
-              <h3 className="text-foreground text-2xl font-bold tracking-tight">Overview</h3>
-              <p className="text-muted-foreground text-sm font-medium mt-1">Your core metrics, updated right now.</p>
+              <h3 className="text-foreground text-2xl font-bold tracking-tight">Live Command Center</h3>
+              <p className="text-muted-foreground text-sm font-medium mt-1">Active incidents, triage, and response flow in real time.</p>
             </div>
             <div className="flex gap-2">
-              <span className="px-4 py-1.5 bg-foreground rounded-full text-xs font-bold text-background">Today</span>
-              <span className="px-4 py-1.5 bg-card border border-border rounded-full text-xs font-bold text-foreground">Week</span>
+              <span className="px-4 py-1.5 bg-foreground rounded-full text-xs font-bold text-background">Now</span>
+              <span className="px-4 py-1.5 bg-card border border-border rounded-full text-xs font-bold text-foreground">6h</span>
             </div>
           </div>
 
           {/* Stat cards */}
           <div className="grid grid-cols-3 gap-6">
             {[
-              { label: "Revenue", value: "$4.2M", trend: "+14.5%" },
-              { label: "Users", value: "842k", trend: "+5.2%" },
-              { label: "Uptime", value: "99.9%", trend: "0.0%" },
+              { label: "Active Incidents", value: "18", trend: "+5" },
+              { label: "Avg Dispatch", value: "4m 12s", trend: "-1m" },
+              { label: "Teams Routed", value: "12", trend: "+2" },
             ].map((card, idx) => (
               <motion.div
                 key={card.label}
@@ -70,7 +70,7 @@ export default function DashboardMockup() {
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-bold tracking-tight text-muted-foreground uppercase">{card.label}</span>
                   <span
-                    className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${card.trend.startsWith("+") ? "bg-[#e5fcf5] text-[#00a86b] dark:bg-[#003322] dark:text-[#00e691]" : "bg-border text-muted-foreground"}`}
+                    className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${card.trend.startsWith("+") ? "bg-card border border-border text-foreground" : "bg-border text-muted-foreground"}`}
                   >
                     {card.trend}
                   </span>
@@ -88,7 +88,7 @@ export default function DashboardMockup() {
             className="flex-1 flex flex-col gap-4"
           >
             <div className="flex items-center justify-between">
-              <span className="text-sm font-bold text-foreground">Volume</span>
+              <span className="text-sm font-bold text-foreground">Incident Throughput</span>
             </div>
             {/* Fake bar chart wrapper */}
             <div className="flex-1 flex items-end gap-3 relative border-b border-border pb-4">
